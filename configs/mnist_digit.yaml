@@ -1,0 +1,131 @@
+seed: 7
+dataset: MNIST
+data_root: ./_data
+output_dir: ./outputs/MNIST_digit5
+image_size: 28
+channels: 1
+
+#keyword:
+#  type: mnist_digit
+#  name: digit5
+#  target_digit: 5
+#  classifier_ckpt: ./outputs/MNIST_digit5/public_digit_classifier.pt
+#  saliency_top_ratio: 0.30
+#  saliency_smooth: true
+#  saliency_dilate: true
+#
+#diffusion:
+#  T: 1000
+#  beta_start: 0.0001
+#  beta_end: 0.02
+#  min_t: 50
+#  max_extra_t: 350
+#  sensitivity_l2: 1.0
+#  delta: 1.0e-5
+#  target_epsilon: 2.0
+#
+#keyword_actions:
+#  extra_t_keyword: [0, 25, 50, 100, 200]
+#  extra_t_background: [0, 25, 50]
+#  denoise_keyword: [0.0, 0.25, 0.50]
+#  denoise_background: [0.25, 0.50, 0.75]
+#  risk_threshold: [0.02, 0.05, 0.10, 0.15]
+#
+#classifier:
+#  epochs: 3
+#  batch_size: 128
+#  lr: 0.001
+#
+#ppo:
+#  obs_dim: 10
+#  hidden_dim: 128
+#  lr: 0.0003
+#  gamma: 0.99
+#  clip_eps: 0.2
+#  entropy_coef: 0.02
+#  value_coef: 0.5
+#  epochs: 4
+#  batch_size: 128
+#  updates: 300
+#  rollout_steps: 512
+#
+#reward:
+#  global_utility_weight: 0.5
+#  background_utility_weight: 1.0
+#  keyword_confidence_weight: 0.8
+#  risk_weight: 2.0
+#  keyword_denoise_penalty: 0.2
+#  background_noise_penalty: 0.4
+#  keyword_noise_bonus: 0.4
+#  reject_penalty_weight: 0.05
+
+
+keyword:
+  type: mnist_digit
+  name: digit
+  target_digits: [5, 6]
+  classifier_ckpt: ./outputs/MNIST_digit_strict/public_digit_classifier.pt
+
+  saliency_top_ratio: 0.45
+  saliency_smooth: true
+  saliency_dilate: true
+
+  use_foreground_union: true
+  foreground_top_ratio: 0.45
+  foreground_smooth: true
+  foreground_dilate: true
+
+  detect_score_threshold: 0.35
+  release_score_limit: 0.10
+
+diffusion:
+  T: 1000
+  beta_start: 0.0001
+  beta_end: 0.02
+  min_t: 50
+  max_extra_t: 750
+  sensitivity_l2: 1.0
+  delta: 1.0e-5
+  target_epsilon: 2.0
+
+keyword_actions:
+  extra_t_keyword: [0, 100, 200, 350, 500, 650]
+  extra_t_background: [0, 25, 50]
+  denoise_keyword: [0.0, 0.10, 0.25]
+  denoise_background: [0.25, 0.50, 0.75]
+  risk_threshold: [0.01, 0.02, 0.05, 0.10]
+
+keyword_guard:
+  enabled: true
+  score_trigger: 0.35
+  min_extra_keyword_when_detected: 350
+  max_denoise_keyword_when_detected: 0.10
+  max_threshold_when_detected: 0.05
+
+classifier:
+  epochs: 3
+  batch_size: 128
+  lr: 0.001
+
+ppo:
+  obs_dim: 10
+  hidden_dim: 128
+  lr: 0.0003
+  gamma: 0.99
+  clip_eps: 0.2
+  entropy_coef: 0.03
+  value_coef: 0.5
+  epochs: 4
+  batch_size: 128
+  updates: 500
+  rollout_steps: 512
+
+reward:
+  global_utility_weight: 0.10
+  background_utility_weight: 1.00
+  keyword_confidence_weight: 8.00
+  risk_weight: 3.00
+  keyword_denoise_penalty: 1.00
+  background_noise_penalty: 0.50
+  keyword_noise_bonus: 1.00
+  reject_penalty_weight: 0.02

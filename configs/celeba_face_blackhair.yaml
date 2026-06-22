@@ -1,0 +1,73 @@
+seed: 7
+dataset: CelebA
+data_root: ./_data/CelebA/processed
+output_dir: ./outputs/CelebA_face_blackhair
+image_size: 32
+channels: 3
+
+keyword:
+  type: face_blackhair_prior
+  name: face_blackhair
+  ellipse_rx: 0.34
+  ellipse_ry: 0.42
+  ellipse_cy: 0.48
+  ellipse_softness: 0.08
+  hair_y_max: 0.48
+  hair_x_margin: 0.16
+  hair_softness: 0.08
+  mask_mode: hair_only
+
+  detect_score_threshold: 0.55
+  release_score_limit: 0.25
+
+keyword_guard:
+  enabled: true
+  score_trigger: 0.55
+  min_extra_keyword_when_detected: 200
+  max_denoise_keyword_when_detected: 0.25
+  max_threshold_when_detected: 0.10
+
+diffusion:
+  T: 1000
+  beta_start: 0.0001
+  beta_end: 0.02
+  min_t: 80
+  max_extra_t: 500
+  sensitivity_l2: 1.0
+  delta: 1.0e-5
+  target_epsilon: 2.0
+
+classifier:
+  epochs: 3
+  batch_size: 128
+  lr: 0.001
+
+ppo:
+  obs_dim: 10
+  hidden_dim: 128
+  lr: 0.0003
+  gamma: 0.99
+  clip_eps: 0.2
+  entropy_coef: 0.02
+  value_coef: 0.5
+  epochs: 4
+  batch_size: 128
+  updates: 300
+  rollout_steps: 512
+
+keyword_actions:
+  extra_t_keyword: [0, 100, 200, 350]
+  extra_t_background: [0, 25, 50]
+  denoise_keyword: [0.0, 0.10, 0.25]
+  denoise_background: [0.50, 0.75]
+  risk_threshold: [0.03, 0.06, 0.10, 0.15]
+
+reward:
+  global_utility_weight: 0.30
+  background_utility_weight: 1.00
+  keyword_confidence_weight: 3.00
+  risk_weight: 1.50
+  keyword_denoise_penalty: 0.50
+  background_noise_penalty: 0.50
+  keyword_noise_bonus: 0.50
+  reject_penalty_weight: 0.02
